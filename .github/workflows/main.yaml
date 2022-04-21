@@ -17,10 +17,10 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup git and ssh
+        #          ${{ secrets.AUR_SSH_PRIVATE_KEY }} > ~./ssh/aur
         run: |
           mkdir -p ~/.ssh
           cp .github/ssh_config ~/.ssh/config
-#          ${{ secrets.AUR_SSH_PRIVATE_KEY }} > ~./ssh/aur
           
           git config user.name "Philip Meier"
           git config user.email "meier.philip@posteo.de"
