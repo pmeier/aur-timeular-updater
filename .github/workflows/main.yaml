@@ -25,7 +25,7 @@ jobs:
           git config user.name "Philip Meier"
           git config user.email "meier.philip@posteo.de"
           
-          git submodule init --all
+          git submodule init
           cd aur-timeular
           git status
           git remote -v
