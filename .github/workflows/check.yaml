@@ -19,7 +19,7 @@ jobs:
       - name: Extract current version
         id: current
         run: |
-          VERSION=cat aur-timeular/PKGBUILD | grep 'pkgver=' | sed -e 's/pkgver=//'
+          VERSION=`cat aur-timeular/PKGBUILD | grep 'pkgver=' | sed -e 's/pkgver=//'`
           echo "Current version ${VERSION}"
           echo "::set-output name=version::${VERSION}"
 
@@ -29,7 +29,7 @@ jobs:
           wget --no-verbose https://s3.amazonaws.com/timeular-desktop-packages/linux/production/Timeular.AppImage
           chmod +x Timeular.AppImage
           ./Timeular.AppImage --appimage-extract
-          VERSION=cat squashfs-root/timeular.desktop | grep X-AppImage-Version | sed -e 's/[^=]\+=\([0-9]\+\.[0-9]\+\.[0-9]\+\).*/\1/'
+          VERSION=`cat squashfs-root/timeular.desktop | grep X-AppImage-Version | sed -e 's/[^=]\+=\([0-9]\+\.[0-9]\+\.[0-9]\+\).*/\1/'`
           echo "Latest version ${VERSION}"
           echo "::set-output name=version::${VERSION}"
 
