@@ -18,6 +18,7 @@ jobs:
 
       - name: Setup git and ssh
         run: |
+          mkdir -p ~/.ssh
           cp .github/ssh_config ~/.ssh/config
           ${{ secrets.AUR_SSH_PRIVATE_KEY }} > ~./ssh/aur
           
