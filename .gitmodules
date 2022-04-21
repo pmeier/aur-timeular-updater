@@ -1,0 +1,3 @@
+[submodule "aur-timeular"]
+	path = aur-timeular
+	url = https://aur.archlinux.org/timeular.git
