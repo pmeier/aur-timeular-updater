@@ -20,11 +20,10 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           cp .github/ssh_config ~/.ssh/config
-          echo ${{ secrets.MUTLILINE }} > ~/.ssh/aur
-          cat ~/.ssh/aur
+          echo ${{ secrets.AUR_SSH_PRIVATE_KEY }} > ~/.ssh/aur
           
           git config user.name "Philip Meier"
-          git config user.email "meier.philip@posteo.de"
+          git config user.email ${{ secrets.AUR_EMAIL }}
           
           git submodule init
           git submodule update
