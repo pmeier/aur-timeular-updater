@@ -16,7 +16,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          fetch_depth: 0
           submodules: true
 
       - name: Extract current version
