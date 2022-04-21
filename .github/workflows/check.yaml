@@ -19,6 +19,7 @@ jobs:
       - name: Extract current version
         id: current
         run: |
+          ls -l aur-timeular
           VERSION=`cat aur-timeular/PKGBUILD | grep 'pkgver=' | sed -e 's/pkgver=//'`
           echo "Current version ${VERSION}"
           echo "::set-output name=version::${VERSION}"
