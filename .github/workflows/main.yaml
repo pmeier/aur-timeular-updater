@@ -59,8 +59,7 @@ jobs:
           git config user.name "Philip Meier"
           git config user.email "meier.philip@posteo.de"
           git checkout master
-          git status
           git commit -am "${CURRENT_VERSION} -> ${LATEST_VERSION}"
-          git log
-          git push
+          git diff HEAD~1
+#          git push
           
