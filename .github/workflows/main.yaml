@@ -20,7 +20,7 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           cp .github/ssh_config ~/.ssh/config
-          echo ${{ secrets.MULTILINE }} > ~/.ssh/aur
+          echo ${{ secrets.MUTLILINE }} > ~/.ssh/aur
           cat ~/.ssh/aur
           
           git config user.name "Philip Meier"
