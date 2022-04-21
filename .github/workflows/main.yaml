@@ -41,7 +41,7 @@ jobs:
         working-directory: ./aur-timeular
         env:
           CURRENT_VERSION: ${{ steps.current.outputs.version }}
-          LATEST_VERSION: ${{ steps.current.outputs.version }}
+          LATEST_VERSION: ${{ steps.latest.outputs.version }}
         run: |
           sed -e "s/${CURRENT_VERSION}/${LATEST_VERSION}/" -i PKGBUILD
           sed -e "s/${CURRENT_VERSION}/${LATEST_VERSION}/" -i .SRCINFO
@@ -57,6 +57,7 @@ jobs:
           
           git config user.name "Philip Meier"
           git config user.email "meier.philip@posteo.de"
+          git status
           git commit -am "${CURRENT_VERSION} -> ${LATEST_VERSION}"
           git log
           git push
