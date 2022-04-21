@@ -55,6 +55,8 @@ jobs:
           sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i PKGBUILD
           sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i .SRCINFO
           
+          git config user.name "Philip Meier"
+          git config user.email "meier.philip@posteo.de"
           git commit -am "${CURRENT_VERSION} -> ${LATEST_VERSION}"
           git log
           git push
