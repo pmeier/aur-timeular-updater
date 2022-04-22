@@ -20,7 +20,7 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           cp .github/ssh_config ~/.ssh/config
-          echo "${{ secrets.AUR_SSH_PRIVATE_KEY }}" > ~/.ssh/aur <<EOF
+          echo "${{ secrets.AUR_SSH_PRIVATE_KEY }}" > ~/.ssh/aur
           
           git config user.name 'Philip Meier'
           git config user.email "${{ secrets.AUR_EMAIL }}"
