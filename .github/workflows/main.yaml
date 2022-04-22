@@ -16,12 +16,14 @@ jobs:
       - name: Setup pacman
         run: |
           sudo apt update -qy
-          sudo apt install -q pacman
+          sudo apt install pacman
+          pacman --help
+          makepkg --help
 
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup ssh and git including submodule
+      - name: Setup ssh and git
         run: |
           mkdir ~/.ssh
           cp ssh_config ~/.ssh/config
@@ -32,8 +34,13 @@ jobs:
           git config --global user.name 'Philip Meier'
           git config --global user.email "${{ secrets.AUR_EMAIL }}"
 
+      - name: Setup submodule
+        run: |
           git submodule init
           git submodule update
+          
+          cd aur-timeular
+          git checkout master
 
       - name: Extract current version
         id: current
@@ -72,7 +79,6 @@ jobs:
           
           makepkg --printsrcinfo > .SRCINFO
 
-          git checkout master
           git commit -am "${CURRENT_VERSION} -> ${LATEST_VERSION}"
           git diff HEAD~1
 #          git push
