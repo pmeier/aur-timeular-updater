@@ -1,0 +1,85 @@
+name: AUR package
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/main.yaml"
+
+  schedule:
+    - cron: "0 4 * * *"
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup ssh and git
+        run: |
+          mkdir ~/.ssh
+          cp ssh_config ~/.ssh/config
+          ssh-keyscan aur.archlinux.org > ~/.ssh/known_hosts
+          echo "${{ secrets.AUR_SSH_PRIVATE_KEY }}" > ~/.ssh/aur
+          chmod 400 ~/.ssh/aur
+          
+          git config --global user.name 'Philip Meier'
+          git config --global user.email "${{ secrets.AUR_EMAIL }}"
+
+      - name: Setup submodule
+        run: |
+          git submodule init
+          git submodule update
+          
+          cd aur-timeular
+          git checkout master
+
+      - name: Extract current version
+        id: current
+        working-directory: ./aur-timeular
+        run: |
+          SHA512=`cat PKGBUILD | grep sha512sums | sed -e "s/sha512sums=('\([0-9a-f]\{128\}\)'/\1/"`
+          echo "${SHA512}"
+          echo "::set-output name=sha512::${SHA512}"
+          
+          VERSION=`cat PKGBUILD | grep 'pkgver=' | sed -e 's/pkgver=//'`
+          echo "${VERSION}"
+          echo "::set-output name=version::${VERSION}"
+
+      - name: Extract latest version
+        id: latest
+        run: |
+          wget --no-verbose https://s3.amazonaws.com/timeular-desktop-packages/linux/production/Timeular.AppImage
+          
+          SHA512=`sha512sum Timeular.AppImage | cut -d " " -f 1`
+          echo "${SHA512}"
+          echo "::set-output name=sha512::${SHA512}"
+          
+          chmod +x Timeular.AppImage
+          ./Timeular.AppImage --appimage-extract
+          VERSION=`cat squashfs-root/timeular.desktop | grep X-AppImage-Version | sed -e 's/[^=]\+=\([0-9]\+\.[0-9]\+\.[0-9]\+\).*/\1/'`
+          echo "${VERSION}"
+          echo "::set-output name=version::${VERSION}"
+
+      - name: Update AUR package
+        if: steps.current.outputs.version != steps.latest.outputs.version
+        working-directory: ./aur-timeular
+        env:
+          CURRENT_SHA512: ${{ steps.current.outputs.sha512 }}
+          CURRENT_VERSION: ${{ steps.current.outputs.version }}
+          LATEST_SHA512: ${{ steps.latest.outputs.sha512 }}
+          LATEST_VERSION: ${{ steps.latest.outputs.version }}
+        run: |
+          sed -e "s/${CURRENT_VERSION}/${LATEST_VERSION}/" -i PKGBUILD
+          sed -e "s/${CURRENT_VERSION}/${LATEST_VERSION}/" -i .SRCINFO
+          
+          sed -e 's/pkgrel=[0-9]\+/pkgrel=0/' -i PKGBUILD
+          sed -e 's/pkgrel = [0-9]\+/pkgrel = 0/' -i .SRCINFO
+          
+          sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i PKGBUILD
+          sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i .SRCINFO
+
+          git commit -am "${CURRENT_VERSION} -> ${LATEST_VERSION}"
+          git diff HEAD~1
+          git push
