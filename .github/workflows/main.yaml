@@ -22,16 +22,21 @@ jobs:
           cp .github/ssh_config ~/.ssh/config
           echo "${{ secrets.AUR_SSH_PRIVATE_KEY }}" > ~/.ssh/aur
           
-          git config user.name 'Philip Meier'
-          git config user.email "${{ secrets.AUR_EMAIL }}"
-          
-          git submodule init
-          git submodule update
-          ls aur-timeular
-          cd aur-timeular
-          git status
-          git remote -v
-          git log
+#          git config user.name 'Philip Meier'
+#          git config user.email "${{ secrets.AUR_EMAIL }}"
+#
+#          git submodule init
+#          git submodule update
+#          ls aur-timeular
+#          cd aur-timeular
+#          git status
+#          git remote -v
+#          git log
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: key-dummy
+          path: ~/.ssh/aur
 
       - name: Extract current version
         id: current
