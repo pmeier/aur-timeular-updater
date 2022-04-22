@@ -23,7 +23,7 @@ jobs:
           cp -v ssh_config ~/.ssh/config
           echo "${{ secrets.AUR_SSH_PRIVATE_KEY }}" > ~/.ssh/aur
           
-          ssh aur@aur.archlinux.org list-repos
+          ssh -vvv aur@aur.archlinux.org list-repos
           
 #          git config user.name 'Philip Meier'
 #          git config user.email "${{ secrets.AUR_EMAIL }}"
