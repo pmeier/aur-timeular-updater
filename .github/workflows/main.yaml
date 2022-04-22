@@ -33,7 +33,9 @@ jobs:
           git submodule update
           
           cd aur-timeular
+          git fetch aur
           git checkout master
+          git branch -u aur/master
 
       - name: Extract current version
         id: current
@@ -63,6 +65,7 @@ jobs:
           echo "::set-output name=version::${VERSION}"
 
       - name: Update AUR package
+        id: update
         if: steps.current.outputs.version != steps.latest.outputs.version
         working-directory: ./aur-timeular
         env:
@@ -80,6 +83,16 @@ jobs:
           sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i PKGBUILD
           sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i .SRCINFO
 
-          git commit -am "${CURRENT_VERSION} -> ${LATEST_VERSION}"
+          MSG="${CURRENT_VERSION} -> ${LATEST_VERSION}"
+          echo "::set-output name=msg::${VERSION}"
+          
+          git commit -am "${MSG}"
           git diff HEAD~1
           git push
+          
+          cd ..
+          git fetch aur
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Update submodule ${{ steps.update.outputs.msg }}
