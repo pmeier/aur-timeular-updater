@@ -13,13 +13,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Setup pacman
-        run: |
-          sudo apt update -qy
-          sudo apt install pacman
-          pacman --help
-          makepkg --help
-
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -44,9 +37,13 @@ jobs:
 
       - name: Extract current version
         id: current
+        working-directory: ./aur-timeular
         run: |
-          ls -l aur-timeular
-          VERSION=`cat aur-timeular/PKGBUILD | grep 'pkgver=' | sed -e 's/pkgver=//'`
+          SHA512=`cat PKGBUILD | grep sha512sums | sed -e "s/sha512sums=('\([0-9a-f]\{128\}\)'/\1/"`
+          echo "${SHA512}"
+          echo "::set-output name=sha512::${SHA512}"
+          
+          VERSION=`cat PKGBUILD | grep 'pkgver=' | sed -e 's/pkgver=//'`
           echo "${VERSION}"
           echo "::set-output name=version::${VERSION}"
 
@@ -69,15 +66,19 @@ jobs:
         if: steps.current.outputs.version != steps.latest.outputs.version
         working-directory: ./aur-timeular
         env:
+          CURRENT_SHA512: ${{ steps.current.outputs.sha512 }}
           CURRENT_VERSION: ${{ steps.current.outputs.version }}
-          LATEST_SHA512: ${{ steps.current.outputs.sha512 }}
+          LATEST_SHA512: ${{ steps.latest.outputs.sha512 }}
           LATEST_VERSION: ${{ steps.latest.outputs.version }}
         run: |
           sed -e "s/${CURRENT_VERSION}/${LATEST_VERSION}/" -i PKGBUILD
-          sed -e 's/pkgrel=[0-9]\+/pkgrel=0/' -i PKGBUILD
-          sed -e "s/[0-9a-f]\{128\}/${LATEST_SHA512}/" -i PKGBUILD
+          sed -e "s/${CURRENT_VERSION}/${LATEST_VERSION}/" -i .SRCINFO
           
-          makepkg --printsrcinfo > .SRCINFO
+          sed -e 's/pkgrel=[0-9]\+/pkgrel=0/' -i PKGBUILD
+          sed -e 's/pkgrel = [0-9]\+/pkgrel = 0/' -i .SRCINFO
+          
+          sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i PKGBUILD
+          sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i .SRCINFO
 
           git commit -am "${CURRENT_VERSION} -> ${LATEST_VERSION}"
           git diff HEAD~1
