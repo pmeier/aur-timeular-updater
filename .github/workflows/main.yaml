@@ -33,6 +33,7 @@ jobs:
           git submodule update
           
           cd aur-timeular
+          git remote -v
           git fetch aur
           git checkout master
           git branch -u aur/master
