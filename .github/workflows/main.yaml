@@ -16,7 +16,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup ssh and git submodule
+      - name: Setup ssh and git including submodule
         run: |
           mkdir ~/.ssh
           cp ssh_config ~/.ssh/config
@@ -24,8 +24,8 @@ jobs:
           echo "${{ secrets.AUR_SSH_PRIVATE_KEY }}" > ~/.ssh/aur
           chmod 400 ~/.ssh/aur
           
-          git config user.name 'Philip Meier'
-          git config user.email "${{ secrets.AUR_EMAIL }}"
+          git config --global user.name 'Philip Meier'
+          git config --global user.email "${{ secrets.AUR_EMAIL }}"
 
           git submodule init
           git submodule update
