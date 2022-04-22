@@ -26,8 +26,8 @@ jobs:
           git config user.name 'Philip Meier'
           git config user.email "${{ secrets.AUR_EMAIL }}"
 
-          git submodule init -v
-          git submodule update -v
+          git submodule init
+          git submodule update
 #          ls aur-timeular
 #          cd aur-timeular
 #          git status
