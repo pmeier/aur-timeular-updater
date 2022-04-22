@@ -13,6 +13,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Setup pacman
+        run: |
+          sudo apt update -qy
+          sudo apt install pacman
+
       - name: Checkout repository
         uses: actions/checkout@v3
 
