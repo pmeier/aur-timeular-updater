@@ -16,27 +16,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup ssh and git
+      - name: Setup ssh and git submodule
         run: |
           mkdir -v ~/.ssh
           cp -v ssh_config ~/.ssh/config
           ssh-keyscan aur.archlinux.org > ~/.ssh/known_hosts
-          
           echo "${{ secrets.AUR_SSH_PRIVATE_KEY }}" > ~/.ssh/aur
           chmod 400 ~/.ssh/aur
           
-          ssh -vvv aur@aur.archlinux.org list-repos
-          
-#          git config user.name 'Philip Meier'
-#          git config user.email "${{ secrets.AUR_EMAIL }}"
-#
-#          git submodule init
-#          git submodule update
-##          ls aur-timeular
-##          cd aur-timeular
-##          git status
-##          git remote -v
-##          git log
+          git config user.name 'Philip Meier'
+          git config user.email "${{ secrets.AUR_EMAIL }}"
+
+          git submodule init
+          git submodule update
+          ls aur-timeular
+          cd aur-timeular
+          git status
+          git remote -v
+          git log
 #
 #      - name: Extract current version
 #        id: current
