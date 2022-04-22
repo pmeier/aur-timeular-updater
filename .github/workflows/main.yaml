@@ -38,11 +38,6 @@ jobs:
 ##          git remote -v
 ##          git log
 #
-#      - uses: actions/upload-artifact@v3
-#        with:
-#          name: key-dummy
-#          path: ~/.ssh/aur
-#
 #      - name: Extract current version
 #        id: current
 #        run: |
