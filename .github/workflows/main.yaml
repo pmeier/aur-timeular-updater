@@ -16,7 +16,7 @@ jobs:
       - name: Setup pacman
         run: |
           sudo apt update -qy
-          sudo apt install pacman
+          sudo apt install -q pacman
 
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -47,6 +47,11 @@ jobs:
         id: latest
         run: |
           wget --no-verbose https://s3.amazonaws.com/timeular-desktop-packages/linux/production/Timeular.AppImage
+          
+          SHA512=`sha512sum Timeular.AppImage | cut -d " " -f 1`
+          echo "${SHA512}"
+          echo "::set-output name=sha512::${SHA512}"
+          
           chmod +x Timeular.AppImage
           ./Timeular.AppImage --appimage-extract
           VERSION=`cat squashfs-root/timeular.desktop | grep X-AppImage-Version | sed -e 's/[^=]\+=\([0-9]\+\.[0-9]\+\.[0-9]\+\).*/\1/'`
@@ -58,19 +63,14 @@ jobs:
         working-directory: ./aur-timeular
         env:
           CURRENT_VERSION: ${{ steps.current.outputs.version }}
+          LATEST_SHA512: ${{ steps.current.outputs.sha512 }}
           LATEST_VERSION: ${{ steps.latest.outputs.version }}
         run: |
           sed -e "s/${CURRENT_VERSION}/${LATEST_VERSION}/" -i PKGBUILD
-          sed -e "s/${CURRENT_VERSION}/${LATEST_VERSION}/" -i .SRCINFO
-
           sed -e 's/pkgrel=[0-9]\+/pkgrel=0/' -i PKGBUILD
-          sed -e 's/pkgrel = [0-9]\+/pkgrel = 0/' -i .SRCINFO
-
-          CURRENT_SHA512=`cat PKGBUILD | grep sha512sums | sed -e "s/sha512sums=('\([0-9a-f]\{128\}\)'/\1/"`
-          LATEST_SHA512=`sha512sum ../Timeular.AppImage | cut -d " " -f 1`
-
-          sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i PKGBUILD
-          sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i .SRCINFO
+          sed -e "s/[0-9a-f]\{128\}/${LATEST_SHA512}/" -i PKGBUILD
+          
+          makepkg --printsrcinfo > .SRCINFO
 
           git checkout master
           git commit -am "${CURRENT_VERSION} -> ${LATEST_VERSION}"
