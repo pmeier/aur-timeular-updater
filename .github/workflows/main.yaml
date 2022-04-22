@@ -82,5 +82,4 @@ jobs:
 
           git commit -am "${CURRENT_VERSION} -> ${LATEST_VERSION}"
           git diff HEAD~1
-#          git push
-          
+          git push
