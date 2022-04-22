@@ -18,8 +18,8 @@ jobs:
 
       - name: Setup ssh and git submodule
         run: |
-          mkdir -v ~/.ssh
-          cp -v ssh_config ~/.ssh/config
+          mkdir ~/.ssh
+          cp ssh_config ~/.ssh/config
           ssh-keyscan aur.archlinux.org > ~/.ssh/known_hosts
           echo "${{ secrets.AUR_SSH_PRIVATE_KEY }}" > ~/.ssh/aur
           chmod 400 ~/.ssh/aur
@@ -29,51 +29,46 @@ jobs:
 
           git submodule init
           git submodule update
-          ls aur-timeular
-          cd aur-timeular
-          git status
-          git remote -v
-          git log
-#
-#      - name: Extract current version
-#        id: current
-#        run: |
-#          ls -l aur-timeular
-#          VERSION=`cat aur-timeular/PKGBUILD | grep 'pkgver=' | sed -e 's/pkgver=//'`
-#          echo "${VERSION}"
-#          echo "::set-output name=version::${VERSION}"
-#
-#      - name: Extract latest version
-#        id: latest
-#        run: |
-#          wget --no-verbose https://s3.amazonaws.com/timeular-desktop-packages/linux/production/Timeular.AppImage
-#          chmod +x Timeular.AppImage
-#          ./Timeular.AppImage --appimage-extract
-#          VERSION=`cat squashfs-root/timeular.desktop | grep X-AppImage-Version | sed -e 's/[^=]\+=\([0-9]\+\.[0-9]\+\.[0-9]\+\).*/\1/'`
-#          echo "${VERSION}"
-#          echo "::set-output name=version::${VERSION}"
-#
-#      - name: Update AUR package
-#        if: steps.current.outputs.version != steps.latest.outputs.version
-#        working-directory: ./aur-timeular
-#        env:
-#          CURRENT_VERSION: ${{ steps.current.outputs.version }}
-#          LATEST_VERSION: ${{ steps.latest.outputs.version }}
-#        run: |
-#          sed -e "s/${CURRENT_VERSION}/${LATEST_VERSION}/" -i PKGBUILD
-#          sed -e "s/${CURRENT_VERSION}/${LATEST_VERSION}/" -i .SRCINFO
-#
-#          sed -e 's/pkgrel=[0-9]\+/pkgrel=0/' -i PKGBUILD
-#          sed -e 's/pkgrel = [0-9]\+/pkgrel = 0/' -i .SRCINFO
-#
-#          CURRENT_SHA512=`cat PKGBUILD | grep sha512sums | sed -e "s/sha512sums=('\([0-9a-f]\{128\}\)'/\1/"`
-#          LATEST_SHA512=`sha512sum ../Timeular.AppImage | cut -d " " -f 1`
-#
-#          sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i PKGBUILD
-#          sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i .SRCINFO
-#
-#          git checkout master
-#          git commit -am "${CURRENT_VERSION} -> ${LATEST_VERSION}"
-#          git diff HEAD~1
-##          git push
+
+      - name: Extract current version
+        id: current
+        run: |
+          ls -l aur-timeular
+          VERSION=`cat aur-timeular/PKGBUILD | grep 'pkgver=' | sed -e 's/pkgver=//'`
+          echo "${VERSION}"
+          echo "::set-output name=version::${VERSION}"
+
+      - name: Extract latest version
+        id: latest
+        run: |
+          wget --no-verbose https://s3.amazonaws.com/timeular-desktop-packages/linux/production/Timeular.AppImage
+          chmod +x Timeular.AppImage
+          ./Timeular.AppImage --appimage-extract
+          VERSION=`cat squashfs-root/timeular.desktop | grep X-AppImage-Version | sed -e 's/[^=]\+=\([0-9]\+\.[0-9]\+\.[0-9]\+\).*/\1/'`
+          echo "${VERSION}"
+          echo "::set-output name=version::${VERSION}"
+
+      - name: Update AUR package
+        if: steps.current.outputs.version != steps.latest.outputs.version
+        working-directory: ./aur-timeular
+        env:
+          CURRENT_VERSION: ${{ steps.current.outputs.version }}
+          LATEST_VERSION: ${{ steps.latest.outputs.version }}
+        run: |
+          sed -e "s/${CURRENT_VERSION}/${LATEST_VERSION}/" -i PKGBUILD
+          sed -e "s/${CURRENT_VERSION}/${LATEST_VERSION}/" -i .SRCINFO
+
+          sed -e 's/pkgrel=[0-9]\+/pkgrel=0/' -i PKGBUILD
+          sed -e 's/pkgrel = [0-9]\+/pkgrel = 0/' -i .SRCINFO
+
+          CURRENT_SHA512=`cat PKGBUILD | grep sha512sums | sed -e "s/sha512sums=('\([0-9a-f]\{128\}\)'/\1/"`
+          LATEST_SHA512=`sha512sum ../Timeular.AppImage | cut -d " " -f 1`
+
+          sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i PKGBUILD
+          sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i .SRCINFO
+
+          git checkout master
+          git commit -am "${CURRENT_VERSION} -> ${LATEST_VERSION}"
+          git diff HEAD~1
+#          git push
           
