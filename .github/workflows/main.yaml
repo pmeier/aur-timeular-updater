@@ -33,10 +33,9 @@ jobs:
           git submodule update
           
           cd aur-timeular
-          git remote -v
-          git fetch aur
+          git fetch origin
           git checkout master
-          git branch -u aur/master
+          git branch -u origin/master
 
       - name: Extract current version
         id: current
@@ -92,7 +91,7 @@ jobs:
           git push
           
           cd ..
-          git fetch aur
+          git fetch origin
 
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
