@@ -18,9 +18,11 @@ jobs:
 
       - name: Setup ssh and git
         run: |
-          mkdir -vp ~/.ssh
-          touch ~/.ssh/known_hosts
+          mkdir -v ~/.ssh
           cp -v ssh_config ~/.ssh/config
+          ssh-keyscan -v aur.archlinux.org > ~/.ssh/known_hosts
+          cat ~/.ssh/known_hosts
+          
           echo "${{ secrets.AUR_SSH_PRIVATE_KEY }}" > ~/.ssh/aur
           
           ssh -vvv aur@aur.archlinux.org list-repos
