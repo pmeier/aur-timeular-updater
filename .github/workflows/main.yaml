@@ -20,15 +20,13 @@ jobs:
     steps:
       - name: Debug
         run: |
-          realpath /home/runner/work/_temp/_github_workflow/event.json
-          echo "-----------------------------------------------------------------------"
           echo "${GITHUB_WORKSPACE}"
           echo "-----------------------------------------------------------------------"
           ls -la /
           echo "-----------------------------------------------------------------------"
           ls -la /__w
           echo "-----------------------------------------------------------------------"
-          sudo chown -R aur:aur `echo "${GITHUB_WORKSPACE}" | cut -d/ -f1-2`
+          sudo chmod -R 777 `echo "${GITHUB_WORKSPACE}" | cut -d/ -f1-2`
           ls -la /
           echo "-----------------------------------------------------------------------"
           ls -la /__w
