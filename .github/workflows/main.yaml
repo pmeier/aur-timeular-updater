@@ -14,27 +14,28 @@ jobs:
     container: archlinux
 
     steps:
-      - name: Initialize container
+      - name: Update and install additional packages
         run: |
           pacman -Syu --noconfirm --noprogressbar
           pacman -Sy git openssh wget namcap --noconfirm --noprogressbar
 
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          submodules: true
-          ssh-key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
-
-      - name: Setup ssh and git
+      - name: Setup ssh
         run: |
           mkdir ~/.ssh
           cp ssh_config ~/.ssh/config
           ssh-keyscan aur.archlinux.org > ~/.ssh/known_hosts
           echo "${{ secrets.AUR_SSH_PRIVATE_KEY }}" > ~/.ssh/aur
           chmod 400 ~/.ssh/aur
-          
-          git config --global user.name 'Philip Meier'
-          git config --global user.email "${{ secrets.AUR_EMAIL }}"
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+
+#
+#
+#          git config --global user.name 'Philip Meier'
+#          git config --global user.email "${{ secrets.AUR_EMAIL }}"
 
 
       - name: Setup submodule
