@@ -14,10 +14,10 @@ jobs:
     container: archlinux
 
     steps:
-      - name: Setup additional Arch packaging utilities
+      - name: Setup Arch
         run: |
           pacman -Syu --noconfirm --noprogressbar
-          pacman -Sy namcap --noconfirm --noprogressbar
+          pacman -Sy openssh namcap --noconfirm --noprogressbar
 
       - name: Checkout repository
         uses: actions/checkout@v3
