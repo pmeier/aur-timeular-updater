@@ -14,8 +14,6 @@ jobs:
     container:
       image: reiemp/aur
       options: --user aur
-    env:
-      HOME: /home/aur
 
     steps:
       - name: Update and install additional packages
@@ -24,10 +22,9 @@ jobs:
           sudo pacman -S wget --noconfirm --noprogressbar
 
       - name: Setup ssh
+        env:
+          HOME: /home/aur
         run: echo "${{ secrets.AUR_SSH_PRIVATE_KEY }}" > ~/.ssh/aur
-
-      - name: Test ssh
-        run: ssh -v aur.archlinux.org help
 
       - name: Checkout repository
         uses: actions/checkout@v3
