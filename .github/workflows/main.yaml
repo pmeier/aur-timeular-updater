@@ -84,7 +84,7 @@ jobs:
           sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i .SRCINFO
 
           MSG="${CURRENT_VERSION} -> ${LATEST_VERSION}"
-          echo "::set-output name=msg::${VERSION}"
+          echo "::set-output name=msg::${MSG}"
           
           git commit -am "${MSG}"
           git diff HEAD~1
