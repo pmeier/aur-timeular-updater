@@ -24,7 +24,7 @@ jobs:
           SSH_DIR='/root/.ssh'
           mkdir "${SSH_DIR}"
           AUR_HOST=aur.archlinux.org
-          echo "Host ${AUR_HOST}\n\tUser aur\n\tIdentityFile ${SSH_DIR}/aur" > "${SSH_DIR}/config"
+          echo -e "Host ${AUR_HOST}\n\tUser aur\n\tIdentityFile ${SSH_DIR}/aur" > "${SSH_DIR}/config"
           echo "${{ secrets.AUR_SSH_PRIVATE_KEY }}" > "${SSH_DIR}/aur"
           chmod 400 "${SSH_DIR}/aur"
           ssh-keyscan "${AUR_HOST}" > "${SSH_DIR}/known_hosts"
@@ -32,7 +32,7 @@ jobs:
       - name: Test ssh
         run: |
           cat /root/.ssh/config
-          ssh -v aur@aur.archlinux.org help
+          ssh -v aur.archlinux.org help
 
       - name: Checkout repository
         uses: actions/checkout@v3
