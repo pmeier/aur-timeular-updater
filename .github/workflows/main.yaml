@@ -94,7 +94,6 @@ jobs:
           
           git commit -am "${MSG}"
           git diff HEAD~1
-#          git push
           
           cd ..
           git fetch origin
