@@ -18,8 +18,8 @@ jobs:
     steps:
       - name: Update and install additional packages
         run: |
-          pacman -Syu --noconfirm --noprogressbar
-          pacman -S wget --noconfirm --noprogressbar
+          sudo pacman -Syu --noconfirm --noprogressbar
+          sudo pacman -S wget --noconfirm --noprogressbar
 
       - name: Setup ssh
         run: echo "${{ secrets.AUR_SSH_PRIVATE_KEY }}" > ~/.ssh/aur
