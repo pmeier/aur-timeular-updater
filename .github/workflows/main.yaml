@@ -31,7 +31,8 @@ jobs:
 
       - name: Test ssh
         run: |
-          ssh -v aur.archlinux.org help
+          cat /root/.ssh/config
+          ssh -v aur@aur.archlinux.org help
 
       - name: Checkout repository
         uses: actions/checkout@v3
