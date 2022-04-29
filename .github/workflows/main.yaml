@@ -11,9 +11,14 @@ on:
 jobs:
   update:
     runs-on: ubuntu-latest
-    container: archlinux
+    container:
+      image: archlinux
+      options: --user aur
 
     steps:
+      - name: Debug
+        run: id
+
       - name: Update and install additional packages
         run: |
           pacman -Syu --noconfirm --noprogressbar
