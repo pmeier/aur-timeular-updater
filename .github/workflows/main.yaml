@@ -17,15 +17,16 @@ jobs:
       - name: Update and install additional packages
         run: |
           pacman -Syu --noconfirm --noprogressbar
-          pacman -Sy git openssh wget namcap --noconfirm --noprogressbar
+          pacman -S git openssh wget namcap --noconfirm --noprogressbar
 
       - name: Setup ssh
         run: |
           mkdir ~/.ssh
-          cp ssh_config ~/.ssh/config
-          ssh-keyscan aur.archlinux.org > ~/.ssh/known_hosts
+          AUR_HOST=aur.archlinux.org
+          echo "Host ${AUR_HOST}\n\tUser aur\n\tIdentityFile ~/.ssh/aur" > ~/.ssh/config
           echo "${{ secrets.AUR_SSH_PRIVATE_KEY }}" > ~/.ssh/aur
           chmod 400 ~/.ssh/aur
+          ssh-keyscan "${AUR_HOST}" > ~/.ssh/known_hosts
 
       - name: Test ssh
         run: |
