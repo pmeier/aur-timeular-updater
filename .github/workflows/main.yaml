@@ -19,7 +19,12 @@ jobs:
 
     steps:
       - name: Debug
-        run: sudo chown -R aur:aur "${GITHUB_WORKSPACE}"
+        run: |
+          ls -la /
+          echo "-----------------------------------------------------------------------"
+          ls -la /__w
+          echo "-----------------------------------------------------------------------"
+          sudo chown -R aur:aur "${GITHUB_WORKSPACE}"
 
       - name: Update and install additional packages
         run: |
