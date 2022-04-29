@@ -19,7 +19,7 @@ jobs:
 
     steps:
       - name: Debug
-        run: echo $GITHUB_WORKSPACE
+        run: sudo chown -R aur:aur "${GITHUB_WORKSPACE}"
 
       - name: Update and install additional packages
         run: |
@@ -27,8 +27,6 @@ jobs:
           sudo pacman -S wget --noconfirm --noprogressbar
 
       - name: Setup ssh
-        env:
-          HOME: /home/aur
         run: echo "${{ secrets.AUR_SSH_PRIVATE_KEY }}" > ~/.ssh/aur
 
       - name: Checkout repository
