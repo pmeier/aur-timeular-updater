@@ -12,28 +12,20 @@ jobs:
   update:
     runs-on: ubuntu-latest
     container:
-      image: archlinux
+      image: reiemp/aur
       options: --user aur
 
     steps:
-      - name: Debug
-        run: id
-
       - name: Update and install additional packages
         run: |
           pacman -Syu --noconfirm --noprogressbar
-          pacman -S git openssh wget namcap --noconfirm --noprogressbar
+          pacman -S wget --noconfirm --noprogressbar
 
       - name: Setup ssh
-        env:
-          HOME: /root
-          AUR_HOST: aur.archlinux.org
-        run: |
-          mkdir ~/.ssh
-          echo -e "Host ${AUR_HOST}\n\tUser aur\n\tIdentityFile ~/.ssh/aur" > ~/.ssh/config
-          echo "${{ secrets.AUR_SSH_PRIVATE_KEY }}" > ~/.ssh/aur
-          chmod -R 400 ~/.ssh/aur
-          ssh-keyscan "${AUR_HOST}" > ~/.ssh/known_hosts
+        run: echo "${{ secrets.AUR_SSH_PRIVATE_KEY }}" > ~/.ssh/aur
+
+      - name: Test ssh
+        run: ssh -v aur.archlinux.org test
 
       - name: Checkout repository
         uses: actions/checkout@v3
