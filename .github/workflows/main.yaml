@@ -18,19 +18,8 @@ jobs:
       HOME: /home/aur
 
     steps:
-      - name: Debug
-        run: |
-          echo "${GITHUB_WORKSPACE}"
-          echo "-----------------------------------------------------------------------"
-          ls -la /
-          echo "-----------------------------------------------------------------------"
-          ls -la /__w
-          echo "-----------------------------------------------------------------------"
-          sudo chmod -R 777 `echo "${GITHUB_WORKSPACE}" | cut -d/ -f1-2`
-          ls -la /
-          echo "-----------------------------------------------------------------------"
-          ls -la /__w
-          echo "-----------------------------------------------------------------------"
+      - name: Give aur and root permissions for GitHub workspace
+        run: sudo chmod -R 777 `echo "${GITHUB_WORKSPACE}" | cut -d/ -f1-2`
 
       - name: Update and install additional packages
         run: |
@@ -99,7 +88,7 @@ jobs:
           sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i PKGBUILD
           
           namcap PKGBUILD
-          makepkg --verifysource
+          makepkg --verifysource --noprogressbar
           
           makepkg --printsrcinfo > .SRCINFO
 
