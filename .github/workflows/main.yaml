@@ -11,8 +11,14 @@ on:
 jobs:
   update:
     runs-on: ubuntu-latest
+    container: archlinux
 
     steps:
+      - name: Initialize container
+        run: |
+          pacman -Syu --noconfirm --noprogressbar
+          pacman -Sy git openssh wget namcap --noconfirm --noprogressbar
+
       - name: Checkout repository
         uses: actions/checkout@v3
 
