@@ -21,27 +21,28 @@ jobs:
 
       - name: Setup ssh
         run: |
-          mkdir ~/.ssh
+          SSH_DIR='/root/.ssh'
+          mkdir "${SSH_DIR}"
           AUR_HOST=aur.archlinux.org
-          echo "Host ${AUR_HOST}\n\tUser aur\n\tIdentityFile ~/.ssh/aur" > ~/.ssh/config
-          echo "${{ secrets.AUR_SSH_PRIVATE_KEY }}" > ~/.ssh/aur
-          chmod 400 ~/.ssh/aur
-          ssh-keyscan "${AUR_HOST}" > ~/.ssh/known_hosts
+          echo "Host ${AUR_HOST}\n\tUser aur\n\tIdentityFile ${SSH_DIR}/aur" > "${SSH_DIR}/config"
+          echo "${{ secrets.AUR_SSH_PRIVATE_KEY }}" > "${SSH_DIR}/aur"
+          chmod 400 "${SSH_DIR}/aur"
+          ssh-keyscan "${AUR_HOST}" > "${SSH_DIR}/known_hosts"
 
       - name: Test ssh
         run: |
-          id
-          echo "-----------------------------------------------------------------------"
-          echo "HOME=$HOME"
-          echo "-----------------------------------------------------------------------"
-          realpath ~/.ssh
-          echo "-----------------------------------------------------------------------"
-          ls -la ~/.ssh
-          echo "-----------------------------------------------------------------------"
-          cat ~/.ssh/known_hosts
-          echo "-----------------------------------------------------------------------"
-          cat ~/.ssh/config
-          echo "-----------------------------------------------------------------------"
+#          id
+#          echo "-----------------------------------------------------------------------"
+#          echo "HOME=$HOME"
+#          echo "-----------------------------------------------------------------------"
+#          realpath ~/.ssh
+#          echo "-----------------------------------------------------------------------"
+#          ls -la ~/.ssh
+#          echo "-----------------------------------------------------------------------"
+#          cat ~/.ssh/known_hosts
+#          echo "-----------------------------------------------------------------------"
+#          cat ~/.ssh/config
+#          echo "-----------------------------------------------------------------------"
           ssh -v aur.archlinux.org help
 
       - name: Checkout repository
