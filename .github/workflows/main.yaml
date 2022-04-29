@@ -27,6 +27,10 @@ jobs:
           echo "${{ secrets.AUR_SSH_PRIVATE_KEY }}" > ~/.ssh/aur
           chmod 400 ~/.ssh/aur
 
+      - name: Test ssh
+        run: |
+          ssh -v aur.archlinux.org help
+
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
