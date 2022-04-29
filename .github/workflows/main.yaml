@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: Setup additional Arch packaging utilities
         run: |
-          pacman -Syu
+          pacman -Syu --noconfirm --noprogressbar
           pacman -Sy namcap --noconfirm --noprogressbar
 
       - name: Checkout repository
