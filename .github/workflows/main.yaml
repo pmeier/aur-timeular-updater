@@ -30,11 +30,6 @@ jobs:
           chmod -R 400 ~/.ssh/aur
           ssh-keyscan "${AUR_HOST}" > ~/.ssh/known_hosts
 
-      - name: Test ssh
-        run: |
-          cat /root/.ssh/config
-          ssh -v aur.archlinux.org help
-
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
@@ -89,13 +84,13 @@ jobs:
           LATEST_VERSION: ${{ steps.latest.outputs.version }}
         run: |
           sed -e "s/${CURRENT_VERSION}/${LATEST_VERSION}/" -i PKGBUILD
-          sed -e "s/${CURRENT_VERSION}/${LATEST_VERSION}/" -i .SRCINFO
-          
           sed -e 's/pkgrel=[0-9]\+/pkgrel=0/' -i PKGBUILD
-          sed -e 's/pkgrel = [0-9]\+/pkgrel = 0/' -i .SRCINFO
-          
           sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i PKGBUILD
-          sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i .SRCINFO
+          
+          namcap PKGBUILD
+          makepkg --verifysource
+          
+          makepkg --printsrcinfo > .SRCINFO
 
           MSG="${CURRENT_VERSION} -> ${LATEST_VERSION}"
           echo "::set-output name=msg::${VERSION}"
