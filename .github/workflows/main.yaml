@@ -17,7 +17,7 @@ jobs:
       - name: Setup Arch
         run: |
           pacman -Syu --noconfirm --noprogressbar
-          pacman -Sy openssh namcap --noconfirm --noprogressbar
+          pacman -Sy git openssh wget namcap --noconfirm --noprogressbar
 
       - name: Checkout repository
         uses: actions/checkout@v3
