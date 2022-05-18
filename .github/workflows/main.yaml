@@ -13,18 +13,22 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: reiemp/aur
-      options: --user aur
-    env:
-      HOME: /home/aur
 
     steps:
-      - name: Give aur and root permissions for GitHub workspace
+      - name: Give all users permissions for GitHub workspace
         run: sudo chmod -R 777 `echo "${GITHUB_WORKSPACE}" | cut -d/ -f1-2`
+
+      - name: Debug
+        run: |
+          echo id
+          echo $HOME
+          echo $GITHUB_WORKSPACE
+          ls -lA /
 
       - name: Update and install additional packages
         run: |
           sudo pacman -Syu --noconfirm --noprogressbar
-          sudo pacman -S wget --noconfirm --noprogressbar
+          sudo pacman -S --noconfirm --noprogressbar wget
 
       - name: Setup ssh
         run: echo "${{ secrets.AUR_SSH_PRIVATE_KEY }}" > ~/.ssh/aur
