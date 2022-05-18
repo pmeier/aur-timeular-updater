@@ -13,10 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: reiemp/aur
-      # By default $HOME will be overwritten
-      # See https://github.com/actions/runner/issues/863 for details
-      env:
-        HOME: /home/aur
+    # By default $HOME will be overwritten
+    # See https://github.com/actions/runner/issues/863 for details
+    env:
+      HOME: /home/aur
 
     steps:
       - name: Give all users permissions for GitHub workspace
