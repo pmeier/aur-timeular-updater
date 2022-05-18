@@ -67,8 +67,7 @@ jobs:
 
       - name: Update AUR package
         id: update
-#        if: steps.current.outputs.version != steps.latest.outputs.version
-        if: always()
+        if: steps.current.outputs.version != steps.latest.outputs.version
         working-directory: ./aur-timeular
         env:
           CURRENT_VERSION: ${{ steps.current.outputs.version }}
@@ -87,11 +86,11 @@ jobs:
           
           git commit -am "${MSG}"
           git diff HEAD~1
-#          git push
-#
-#          cd ..
-#          git fetch origin
-#
-#      - uses: stefanzweifel/git-auto-commit-action@v4
-#        with:
-#          commit_message: Update submodule ${{ steps.update.outputs.msg }}
+          git push
+
+          cd ..
+          git fetch origin
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Update submodule ${{ steps.update.outputs.msg }}
