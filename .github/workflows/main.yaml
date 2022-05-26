@@ -20,7 +20,11 @@ jobs:
 
     steps:
       - name: Give all users permissions for GitHub workspace
-        run: sudo chmod -R 777 `echo "${GITHUB_WORKSPACE}" | cut -d/ -f1-2`
+        run: |
+          sudo chmod -R 777 `echo "${GITHUB_WORKSPACE}" | cut -d/ -f1-2`
+          echo "${GITHUB_WORKSPACE}" | cut -d/ -f1-2
+          echo "${GITHUB_WORKSPACE}"
+          git config --global --add safe.directory ${GITHUB_WORKSPACE}
 
       - name: Update and install additional packages
         run: |
@@ -86,14 +90,14 @@ jobs:
           
           git commit -am "${MSG}"
           git diff HEAD~1
-          git push
-
-          cd ..
-          git fetch origin
-
-      - uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: Update submodule ${{ steps.update.outputs.msg }}
+#          git push
+#
+#          cd ..
+#          git fetch origin
+#
+#      - uses: stefanzweifel/git-auto-commit-action@v4
+#        with:
+#          commit_message: Update submodule ${{ steps.update.outputs.msg }}
 
       - uses: JasonEtco/create-an-issue@v2
         if: failure() && github.event_name == 'schedule'
