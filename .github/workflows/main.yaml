@@ -20,11 +20,7 @@ jobs:
 
     steps:
       - name: Give all users permissions for GitHub workspace
-        run: |
-          sudo chmod -R 777 `echo "${GITHUB_WORKSPACE}" | cut -d/ -f1-2`
-          echo "${GITHUB_WORKSPACE}" | cut -d/ -f1-2
-          echo "${GITHUB_WORKSPACE}"
-          git config --global --add safe.directory ${GITHUB_WORKSPACE}
+        run: sudo chmod -R 777 `echo "${GITHUB_WORKSPACE}" | cut -d/ -f1-2`
 
       - name: Update and install additional packages
         run: |
