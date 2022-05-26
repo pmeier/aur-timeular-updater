@@ -39,6 +39,7 @@ jobs:
         with:
           submodules: true
           path: "."
+          fetch-depth: 0
 
       - name: Setup git and submodule
         run: |
