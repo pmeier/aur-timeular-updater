@@ -16,6 +16,11 @@ jobs:
       options: --user root
 
     steps:
+      - name: Update and install additional packages
+        run: |
+          sudo pacman -Syu --noconfirm --noprogressbar
+          sudo pacman -S --noconfirm --noprogressbar wget
+
       - name: Checkout repository
         uses: actions/checkout@v3
 
