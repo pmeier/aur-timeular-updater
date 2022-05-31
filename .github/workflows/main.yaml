@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: reiemp/aur
+      options: --user root
 
     steps:
       - name: Checkout repository
