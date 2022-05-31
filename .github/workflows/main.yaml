@@ -13,43 +13,23 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: reiemp/aur
-    # By default $HOME will be overwritten
-    # See https://github.com/actions/runner/issues/863 for details
-    env:
-      HOME: /home/aur
+      options: --user root
 
     steps:
-      - name: Give all users permissions for GitHub workspace
-        run: sudo chmod -R 777 `echo "${GITHUB_WORKSPACE}" | cut -d/ -f1-2`
-
       - name: Update and install additional packages
         run: |
           sudo pacman -Syu --noconfirm --noprogressbar
           sudo pacman -S --noconfirm --noprogressbar wget
 
-      - name: Setup ssh
-        run: echo "${{ secrets.AUR_SSH_PRIVATE_KEY }}" > ~/.ssh/aur
-
       - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          submodules: true
-          path: "."
-          fetch-depth: 0
 
-      - name: Setup git and submodule
-        run: |
-          git config --global user.name 'Philip Meier'
-          git config --global user.email 'meier.philip@posteo.de'
-          
-          cd aur-timeular
-          git fetch origin
-          git checkout master
-          git branch -u origin/master
+      - name: Checkout AUR repository
+        run: git clone https://aur.archlinux.org/timeular.git
 
       - name: Extract current version
         id: current
-        working-directory: ./aur-timeular
+        working-directory: ./timeular
         run: |
           VERSION=`cat PKGBUILD | grep 'pkgver=' | sed -e 's/pkgver=//'`
           echo "${VERSION}"
@@ -66,10 +46,10 @@ jobs:
           echo "${VERSION}"
           echo "::set-output name=version::${VERSION}"
 
-      - name: Update AUR package
+      - name: Update PKGBUILD
         id: update
         if: steps.current.outputs.version != steps.latest.outputs.version
-        working-directory: ./aur-timeular
+        working-directory: ./timeular
         env:
           CURRENT_VERSION: ${{ steps.current.outputs.version }}
           LATEST_VERSION: ${{ steps.latest.outputs.version }}
@@ -78,25 +58,24 @@ jobs:
           sed -e 's/pkgrel=[0-9]\+/pkgrel=0/' -i PKGBUILD
           
           updpkgsums
-          
           namcap PKGBUILD
-          makepkg --printsrcinfo > .SRCINFO
-
+          
           MSG="${CURRENT_VERSION} -> ${LATEST_VERSION}"
           echo "::set-output name=msg::${MSG}"
-          
-          git commit -am "${MSG}"
-          git diff HEAD~1
-          git push
 
-          cd ..
-          git fetch origin
-
-      - uses: stefanzweifel/git-auto-commit-action@v4
+      - name: Update AUR package
+        if: steps.current.outputs.version != steps.latest.outputs.version
+        uses: KSXGitHub/github-actions-deploy-aur@v2.2.5
         with:
-          commit_message: Update submodule ${{ steps.update.outputs.msg }}
+          pkgname: timeular
+          pkgbuild: ./timeular/PKGBUILD
+          commit_username: ${{ secrets.AUR_USERNAME }}
+          commit_email: ${{ secrets.AUR_EMAIL }}
+          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          commit_message: ${{ steps.update.outputs.msg }}
 
-      - uses: JasonEtco/create-an-issue@v2
+      - name: Create an issue for failed scheduled workflow
+        uses: JasonEtco/create-an-issue@v2
         if: failure() && github.event_name == 'schedule'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
