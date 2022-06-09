@@ -57,7 +57,9 @@ jobs:
           sed -e "s/${CURRENT_VERSION}/${LATEST_VERSION}/" -i PKGBUILD
           sed -e 's/pkgrel=[0-9]\+/pkgrel=0/' -i PKGBUILD
           
+          echo updpkgsums
           updpkgsums
+          echo namcap
           namcap PKGBUILD
           
           MSG="${CURRENT_VERSION} -> ${LATEST_VERSION}"
