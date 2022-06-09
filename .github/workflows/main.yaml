@@ -37,6 +37,7 @@ jobs:
 
       - name: Extract latest version
         id: latest
+        working-directory: ./timeular
         run: |
           wget --no-verbose https://s3.amazonaws.com/timeular-desktop-packages/linux/production/Timeular.AppImage
           chmod +x Timeular.AppImage
@@ -57,9 +58,10 @@ jobs:
           sed -e "s/${CURRENT_VERSION}/${LATEST_VERSION}/" -i PKGBUILD
           sed -e 's/pkgrel=[0-9]\+/pkgrel=0/' -i PKGBUILD
           
-          echo updpkgsums
+          su -V
+          man su
+          cat /etc/passwd
           su aur -c 'updpkgsums'
-          echo namcap
           su aur -c 'namcap PKGBUILD'
           
           MSG="${CURRENT_VERSION} -> ${LATEST_VERSION}"
