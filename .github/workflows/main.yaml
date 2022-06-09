@@ -69,27 +69,28 @@ jobs:
           git diff || true
 
           MSG="${CURRENT_VERSION} -> ${LATEST_VERSION}"
+          echo "${MSG}"
           echo "::set-output name=msg::${MSG}"
 
-#      - name: Update AUR package
-#        if: steps.current.outputs.version != steps.latest.outputs.version
-#        uses: KSXGitHub/github-actions-deploy-aur@v2.2.5
-#        with:
-#          pkgname: timeular
-#          pkgbuild: ./timeular/PKGBUILD
-#          commit_username: ${{ secrets.AUR_USERNAME }}
-#          commit_email: ${{ secrets.AUR_EMAIL }}
-#          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
-#          commit_message: ${{ steps.update.outputs.msg }}
-#
-#      - name: Create an issue for failed scheduled workflow
-#        uses: JasonEtco/create-an-issue@v2
-#        if: failure() && github.event_name == 'schedule'
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          REPO: ${{ github.repository }}
-#          WORKFLOW: ${{ github.workflow }}
-#          JOB: ${{ github.job }}
-#          ID: ${{ github.run_id }}
-#        with:
-#          filename: .github/auto_update_failure_template.md
+      - name: Update AUR package
+        if: steps.current.outputs.version != steps.latest.outputs.version && github.event_name == 'schedule'
+        uses: KSXGitHub/github-actions-deploy-aur@v2.2.5
+        with:
+          pkgname: timeular
+          pkgbuild: ./timeular/PKGBUILD
+          commit_username: ${{ secrets.AUR_USERNAME }}
+          commit_email: ${{ secrets.AUR_EMAIL }}
+          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          commit_message: ${{ steps.update.outputs.msg }}
+
+      - name: Create an issue for failed scheduled workflow
+        uses: JasonEtco/create-an-issue@v2
+        if: failure() && github.event_name == 'schedule'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          WORKFLOW: ${{ github.workflow }}
+          JOB: ${{ github.job }}
+          ID: ${{ github.run_id }}
+        with:
+          filename: .github/auto_update_failure_template.md
