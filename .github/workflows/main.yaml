@@ -58,9 +58,9 @@ jobs:
           sed -e 's/pkgrel=[0-9]\+/pkgrel=0/' -i PKGBUILD
           
           echo updpkgsums
-          updpkgsums
+          su -u aur -c 'updpkgsums'
           echo namcap
-          namcap PKGBUILD
+          su -u aur -c 'namcap PKGBUILD'
           
           MSG="${CURRENT_VERSION} -> ${LATEST_VERSION}"
           echo "::set-output name=msg::${MSG}"
