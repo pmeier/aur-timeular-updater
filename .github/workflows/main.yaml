@@ -52,8 +52,8 @@ jobs:
           sed -e 's/pkgrel=[0-9]\+/pkgrel=0/' -i PKGBUILD
           sed -e 's/pkgrel = [0-9]\+/pkgrel = 0/' -i .SRCINFO
           
-          sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i PKGBUILD
-          sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i .SRCINFO
+#          sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i PKGBUILD
+#          sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i .SRCINFO
           
           git diff || true
 
