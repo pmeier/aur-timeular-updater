@@ -23,6 +23,10 @@ jobs:
         id: current
         working-directory: ./timeular
         run: |
+          SHA512=`cat PKGBUILD | grep sha512sums | sed -e "s/sha512sums=('\([0-9a-f]\{128\}\)'/\1/"`
+          echo "${SHA512}"
+          echo "::set-output name=sha512::${SHA512}"
+          
           VERSION=`cat PKGBUILD | grep 'pkgver=' | sed -e 's/pkgver=//'`
           echo "${VERSION}"
           echo "::set-output name=version::${VERSION}"
@@ -31,6 +35,11 @@ jobs:
         id: latest
         run: |
           wget --no-verbose https://s3.amazonaws.com/timeular-desktop-packages/linux/production/Timeular.AppImage
+          
+          SHA512=`sha512sum Timeular.AppImage | cut -d " " -f 1`
+          echo "${SHA512}"
+          echo "::set-output name=sha512::${SHA512}"
+          
           chmod +x Timeular.AppImage
           ./Timeular.AppImage --appimage-extract
 
@@ -45,6 +54,8 @@ jobs:
         env:
           CURRENT_VERSION: ${{ steps.current.outputs.version }}
           LATEST_VERSION: ${{ steps.latest.outputs.version }}
+          CURRENT_SHA512: ${{ steps.current.outputs.sha512 }}
+          LATEST_SHA512: ${{ steps.latest.outputs.sha512 }}
         run: |
           sed -e "s/${CURRENT_VERSION}/${LATEST_VERSION}/" -i PKGBUILD
           sed -e "s/${CURRENT_VERSION}/${LATEST_VERSION}/" -i .SRCINFO
@@ -52,8 +63,8 @@ jobs:
           sed -e 's/pkgrel=[0-9]\+/pkgrel=0/' -i PKGBUILD
           sed -e 's/pkgrel = [0-9]\+/pkgrel = 0/' -i .SRCINFO
           
-#          sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i PKGBUILD
-#          sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i .SRCINFO
+          sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i PKGBUILD
+          sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i .SRCINFO
           
           git diff || true
 
