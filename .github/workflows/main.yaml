@@ -59,7 +59,7 @@ jobs:
           sed -e 's/pkgrel=[0-9]\+/pkgrel=0/' -i PKGBUILD
           
           su -V
-          man su
+          su --help
           cat /etc/passwd
           su aur -c 'updpkgsums'
           su aur -c 'namcap PKGBUILD'
