@@ -60,8 +60,8 @@ jobs:
           sed -e "s/${CURRENT_VERSION}/${LATEST_VERSION}/" -i PKGBUILD
           sed -e "s/${CURRENT_VERSION}/${LATEST_VERSION}/" -i .SRCINFO
           
-          sed -e 's/pkgrel=[0-9]\+/pkgrel=0/' -i PKGBUILD
-          sed -e 's/pkgrel = [0-9]\+/pkgrel = 0/' -i .SRCINFO
+          sed -e 's/pkgrel=[0-9]\+/pkgrel=1/' -i PKGBUILD
+          sed -e 's/pkgrel = [0-9]\+/pkgrel = 1/' -i .SRCINFO
           
           sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i PKGBUILD
           sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i .SRCINFO
