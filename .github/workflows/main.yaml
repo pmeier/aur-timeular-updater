@@ -25,11 +25,11 @@ jobs:
         run: |
           SHA512=`cat PKGBUILD | grep sha512sums | sed -e "s/sha512sums=('\([0-9a-f]\{128\}\)'/\1/"`
           echo "${SHA512}"
-          echo "::set-output name=sha512::${SHA512}"
+          echo "sha512=${SHA512}"
           
           VERSION=`cat PKGBUILD | grep 'pkgver=' | sed -e 's/pkgver=//'`
           echo "${VERSION}"
-          echo "::set-output name=version::${VERSION}"
+          echo "version=${VERSION}"
 
       - name: Extract latest version
         id: latest
@@ -38,14 +38,14 @@ jobs:
           
           SHA512=`sha512sum Timeular.AppImage | cut -d " " -f 1`
           echo "${SHA512}"
-          echo "::set-output name=sha512::${SHA512}"
+          echo "sha512=${SHA512}"
           
           chmod +x Timeular.AppImage
           ./Timeular.AppImage --appimage-extract
 
           VERSION=`cat squashfs-root/timeular.desktop | grep X-AppImage-Version | sed -e 's/[^=]\+=\([0-9]\+\.[0-9]\+\.[0-9]\+\).*/\1/'`
           echo "${VERSION}"
-          echo "::set-output name=version::${VERSION}"
+          echo "version=${VERSION}"
 
       - name: Update PKGBUILD
         id: update
@@ -70,7 +70,7 @@ jobs:
 
           MSG="${CURRENT_VERSION} -> ${LATEST_VERSION}"
           echo "${MSG}"
-          echo "::set-output name=msg::${MSG}"
+          echo "msg=${MSG}"
 
       - name: Update AUR package
         if: steps.current.outputs.version != steps.latest.outputs.version && github.event_name == 'schedule'
