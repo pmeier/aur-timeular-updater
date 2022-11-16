@@ -47,6 +47,13 @@ jobs:
           echo "${VERSION}"
           echo "version=${VERSION}" >> $GITHUB_ENV
 
+      - name: debug
+        run: |
+          echo $GITHUB_ENV
+          cat $GITHUB_ENV
+          echo ${{ steps.current.outputs }}
+          echo ${{ steps.latest.outputs }}
+
       - name: Update PKGBUILD
         id: update
         if: steps.current.outputs.version != steps.latest.outputs.version
