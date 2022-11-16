@@ -25,11 +25,11 @@ jobs:
         run: |
           SHA512=`cat PKGBUILD | grep sha512sums | sed -e "s/sha512sums=('\([0-9a-f]\{128\}\)'/\1/"`
           echo "${SHA512}"
-          echo "sha512=${SHA512}"
+          echo "sha512=${SHA512}" >> $GITHUB_OUTPUT
           
           VERSION=`cat PKGBUILD | grep 'pkgver=' | sed -e 's/pkgver=//'`
           echo "${VERSION}"
-          echo "version=${VERSION}"
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
 
       - name: Extract latest version
         id: latest
@@ -38,14 +38,14 @@ jobs:
           
           SHA512=`sha512sum Timeular.AppImage | cut -d " " -f 1`
           echo "${SHA512}"
-          echo "sha512=${SHA512}"
+          echo "sha512=${SHA512}" >> $GITHUB_OUTPUT
           
           chmod +x Timeular.AppImage
           ./Timeular.AppImage --appimage-extract
 
           VERSION=`cat squashfs-root/timeular.desktop | grep X-AppImage-Version | sed -e 's/[^=]\+=\([0-9]\+\.[0-9]\+\.[0-9]\+\).*/\1/'`
           echo "${VERSION}"
-          echo "version=${VERSION}"
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
 
       - name: Update PKGBUILD
         id: update
@@ -60,7 +60,7 @@ jobs:
           sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i PKGBUILD
           sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i .SRCINFO
           
-          ESCAPED_CURRENT_VERSION = echo "${CURRENT_VERSION}" | sed -e 's/[]\/$*.^[]/\\&/g'
+          ESCAPED_CURRENT_VERSION=$(echo "${CURRENT_VERSION}" | sed -e 's/[]\/$*.^[]/\\&/g')
           
           sed -e "s/${ESCAPED_CURRENT_VERSION}/${LATEST_VERSION}/" -i PKGBUILD
           sed -e "s/${ESCAPED_CURRENT_VERSION}/${LATEST_VERSION}/" -i .SRCINFO
@@ -72,10 +72,10 @@ jobs:
 
           MSG="${CURRENT_VERSION} -> ${LATEST_VERSION}"
           echo "${MSG}"
-          echo "msg=${MSG}"
+          echo "msg=${MSG}" >> $GITHUB_OUTPUT
 
       - name: Update AUR package
-        if: steps.current.outputs.version != steps.latest.outputs.version && github.event_name == 'schedule'
+        if: steps.update.outcome != 'skipped' && github.event_name == 'schedule'
         uses: KSXGitHub/github-actions-deploy-aur@v2.2.5
         with:
           pkgname: timeular
@@ -96,3 +96,14 @@ jobs:
           ID: ${{ github.run_id }}
         with:
           filename: .github/auto_update_failure_template.md
+
+      # The steps below have the same condition as the real ones above except the
+      # schedule condition is flipped. This allows us to debug the workflow without
+      # risking to actually do something that should only happen on a schedule.
+      - name: (FAKE) Update AUR package
+        if: steps.update.outcome != 'skipped' && github.event_name != 'schedule'
+        run: exit 0
+
+      - name: (FAKE) Create an issue for failed scheduled workflow
+        if: failure() && github.event_name != 'schedule'
+        run: exit 0
