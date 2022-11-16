@@ -47,11 +47,6 @@ jobs:
           echo "${VERSION}"
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
 
-      - name: debug
-        run: |
-          echo ${{ toJSON(steps.current) }}
-          echo ${{ toJSON(steps.latest) }}
-
       - name: Update PKGBUILD
         id: update
         if: steps.current.outputs.version != steps.latest.outputs.version
