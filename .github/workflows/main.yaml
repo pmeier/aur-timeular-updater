@@ -48,11 +48,12 @@ jobs:
           echo "version=${VERSION}" >> $GITHUB_ENV
 
       - name: debug
+        env:
+          CURRENT: ${{ steps.current | toJSON }}
+          LATEST: ${{ steps.latest | toJSON }}
         run: |
-          echo $GITHUB_ENV
-          cat $GITHUB_ENV
-          echo ${{ steps.current.outputs }}
-          echo ${{ steps.latest.outputs }}
+          echo $CURRENT
+          echo $LATEST
 
       - name: Update PKGBUILD
         id: update
