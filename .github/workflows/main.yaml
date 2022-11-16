@@ -97,6 +97,9 @@ jobs:
         with:
           filename: .github/auto_update_failure_template.md
 
+#      The steps below have the same condition as the real ones above except the
+#      schedule condition is flipped. This allows us to debug the workflow without
+#      risking to actually do something that should only happen on a schedule.
       - name: (FAKE) Update AUR package
         if: steps.update.outcome != 'skipped' && github.event_name != 'schedule'
         run: exit 0
