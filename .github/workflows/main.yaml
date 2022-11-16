@@ -60,7 +60,7 @@ jobs:
           sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i PKGBUILD
           sed -e "s/${CURRENT_SHA512}/${LATEST_SHA512}/" -i .SRCINFO
           
-          ESCAPED_CURRENT_VERSION = echo "${CURRENT_VERSION}" | sed -e 's/[]\/$*.^[]/\\&/g'
+          ESCAPED_CURRENT_VERSION=$(echo "${CURRENT_VERSION}" | sed -e 's/[]\/$*.^[]/\\&/g')
           
           sed -e "s/${ESCAPED_CURRENT_VERSION}/${LATEST_VERSION}/" -i PKGBUILD
           sed -e "s/${ESCAPED_CURRENT_VERSION}/${LATEST_VERSION}/" -i .SRCINFO
