@@ -97,7 +97,7 @@ jobs:
         with:
           filename: .github/auto_update_failure_template.md
 
-      - name: [FAKE] Update AUR package
+      - name: Fake Update AUR package
         if: steps.update.outcome != 'skipped' && github.event_name != 'schedule'
         run: exit 0
 
