@@ -48,12 +48,9 @@ jobs:
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
 
       - name: debug
-        env:
-          CURRENT: ${{ steps.current | toJSON }}
-          LATEST: ${{ steps.latest | toJSON }}
         run: |
-          echo $CURRENT
-          echo $LATEST
+          echo ${{ toJSON(steps.current) }}
+          echo ${{ toJSON(steps.latest) }}
 
       - name: Update PKGBUILD
         id: update
