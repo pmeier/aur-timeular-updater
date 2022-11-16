@@ -101,6 +101,6 @@ jobs:
         if: steps.update.outcome != 'skipped' && github.event_name != 'schedule'
         run: exit 0
 
-      - name: Create an issue for failed scheduled workflow [FAKE]
+      - name: (FAKE) Create an issue for failed scheduled workflow
         if: failure() && github.event_name != 'schedule'
         run: exit 0
