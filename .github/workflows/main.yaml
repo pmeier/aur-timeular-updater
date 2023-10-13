@@ -1,6 +1,7 @@
 name: AUR package
 
 on:
+  workflow_dispatch:
   pull_request:
     paths:
       - ".github/workflows/main.yaml"
