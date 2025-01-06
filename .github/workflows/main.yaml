@@ -3,9 +3,6 @@ name: AUR package
 on:
   workflow_dispatch:
   pull_request:
-    paths:
-      - ".github/workflows/main.yaml"
-
   schedule:
     - cron: "0 4 * * *"
 
@@ -70,7 +67,7 @@ jobs:
           echo "msg=${CURRENT_VERSION} -> ${LATEST_VERSION}" >> $GITHUB_OUTPUT
 
       - name: Update AUR package
-        if: steps.update.outcome != 'skipped' && github.event_name == 'schedule'
+        if: steps.update.outcome != 'skipped' && github.event_name != 'pull_request'
         uses: KSXGitHub/github-actions-deploy-aur@v3.0.1
         with:
           pkgname: timeular
@@ -83,7 +80,7 @@ jobs:
 
       - name: Create an issue for failed scheduled workflow
         uses: JasonEtco/create-an-issue@v2
-        if: failure() && github.event_name == 'schedule'
+        if: failure() && github.event_name == 'pull_request'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
